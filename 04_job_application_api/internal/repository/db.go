@@ -2,12 +2,13 @@ package repository
 
 import (
 	"database/sql"
+	"os"
 
 	_ "modernc.org/sqlite"
 )
 
 func InitDB() (*sql.DB, error) {
-	db, err := sql.Open("sqlite", "./jobportal.db")
+	db, err := sql.Open("sqlite", os.Getenv("DB_PATH"))
 
 	if err != nil {
 		return nil, err
@@ -30,7 +31,7 @@ func createTable(db *sql.DB) error {
 	   email TEXT NOT NULL UNIQUE,
 	   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 	   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-	   is_admin BOOLEAN DEFAULT 0
+	   is_admin BOOLEAN DEFAULT 0,
 	   profile_picture TEXT
    )`)
 
