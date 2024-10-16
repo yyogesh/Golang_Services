@@ -30,3 +30,17 @@ func GenerateToken(username string, userID int, isAdmin bool) (string, error) {
 
 	return token.SignedString([]byte(os.Getenv("JWT_SECRET")))
 }
+
+func ValidateToken(tokenString string) (*Clamis, error) {
+	claims := &Clamis{}
+
+	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+		return []byte(os.Getenv("JWT_SECRET")), nil
+	})
+
+	if err != nil || !token.Valid {
+		return nil, err
+	}
+
+	return claims, nil
+}

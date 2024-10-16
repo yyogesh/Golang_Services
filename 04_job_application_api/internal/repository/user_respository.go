@@ -34,3 +34,19 @@ func GetUserByUserName(db *sql.DB, username string) (*models.User, error) {
 	}
 	return user, nil
 }
+
+func UpdateUserProfile(db *sql.DB, user *models.User) (*models.User, error) {
+	_, err := db.Exec("UPDATE users SET username = ?, email = ? WHERE id = ?", user.Username, user.Email, user.ID)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
+}
+
+func UpdateProfilePicture(db *sql.DB, id int, profilePicture string) error {
+	_, err := db.Exec("UPDATE users SET profile_picture = ? WHERE id = ?", profilePicture, id)
+	if err != nil {
+		return err
+	}
+	return nil
+}

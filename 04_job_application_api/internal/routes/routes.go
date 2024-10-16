@@ -2,6 +2,7 @@ package routes
 
 import (
 	"database/sql"
+	"job_portal/internal/auth"
 	"job_portal/internal/handlers"
 
 	"github.com/gin-gonic/gin"
@@ -14,6 +15,10 @@ func InitRoutes(r *gin.Engine, db *sql.DB) {
 		r.POST("/register", handlers.RegisterHandler(db))
 
 		// User routes // employer
-		r.GET("/users/:id", handlers.GetUserByIdHandler(db))
+		authenticated := r.Group("/")
+		authenticated.Use(auth.AuthMiddleware())
+		authenticated.GET("/users/:id", handlers.GetUserByIdHandler(db))
+		authenticated.PUT("/users/:id", handlers.UpdateUserProfileHandler(db))
+		authenticated.POST("/users/:id/picture", handlers.UpdateUserProfilePcitureHandler(db))
 	}
 }
