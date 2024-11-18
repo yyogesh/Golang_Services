@@ -33,3 +33,24 @@ func LoginUser(db *sql.DB, username, password string) (string, error) {
 
 	return utils.GenerateToken(user.Username, user.ID, user.IsAdmin)
 }
+
+func ForgotPassword(db *sql.DB, username string) (string, error) {
+	user, err := repository.GetUserByUserName(db, username)
+	if err != nil {
+		return "", err
+	}
+
+	generatedPassword := utils.GenerateFromPassword(6)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(generatedPassword), bcrypt.DefaultCost)
+
+	if err != nil {
+		return "", err
+	}
+
+	user.Password = string(hashedPassword)
+
+	if err := repository.UpdateUserPassword(db, user); err != nil {
+		return "", err
+	}
+	return generatedPassword, nil
+}

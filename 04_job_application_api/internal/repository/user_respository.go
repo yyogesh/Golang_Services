@@ -50,3 +50,36 @@ func UpdateProfilePicture(db *sql.DB, id int, profilePicture string) error {
 	}
 	return nil
 }
+
+func GetAllUsers(db *sql.DB) ([]*models.User, error) {
+	var users []*models.User
+	rows, err := db.Query("SELECT * FROM users")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var user models.User
+		var profilePicture sql.NullString
+		err := rows.Scan(&user.ID, &user.Username, &user.Password, &user.Email, &user.CreatedAt, &user.UpdatedAt, &user.IsAdmin, &profilePicture)
+		if err != nil {
+			return nil, err
+		}
+		if profilePicture.Valid {
+			user.ProfilePicture = &profilePicture.String
+		} else {
+			user.ProfilePicture = nil
+		}
+		users = append(users, &user)
+	}
+
+	return users, nil
+}
+
+func UpdateUserPassword(db *sql.DB, user *models.User) error {
+	_, err := db.Exec("UPDATE users SET password = ? WHERE id = ?", user.Password, user.ID)
+	if err != nil {
+		return err
+	}
+	return nil
+}

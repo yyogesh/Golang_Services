@@ -1,0 +1,2 @@
+GET http://localhost:8080/jobs/1
+authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImpvaG5kb2UxIiwidXNlcklEIjoxLCJpc19hZG1pbiI6ZmFsc2UsImV4cCI6MTczMDE1MjA0NH0.HnkfaCPhYwgB164Fvvyk46ugk1Oup9mMhzEfOLt2agA
