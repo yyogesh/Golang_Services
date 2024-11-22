@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database/sql"
+	"fmt"
 	"job_portal/internal/models"
 )
 
@@ -82,4 +83,39 @@ func UpdateUserPassword(db *sql.DB, user *models.User) error {
 		return err
 	}
 	return nil
+}
+
+func DeleteUserWithTransaction(tx *sql.Tx, userID int) (string, error) {
+	// Delete associated jobs first
+	_, err := tx.Exec("DELETE FROM jobs WHERE user_id = ?", userID)
+
+	if err != nil {
+		return "", fmt.Errorf("error deleting user's jobs: %v", err)
+	}
+
+	// Get user's profile picture before deleting user
+
+	var profilePicture sql.NullString
+	err = tx.QueryRow("SELECT profile_picture FROM users WHERE id = ?", userID).Scan(&profilePicture)
+	if err != nil {
+		return "", fmt.Errorf("error fetching user's profile picture: %v", err)
+	}
+
+	// Delete the user
+	result, err := tx.Exec("DELETE FROM users WHERE id = ?", userID)
+	if err != nil {
+		return "", fmt.Errorf("error deleting user: %v", err)
+	}
+	rowsAffected, err := result.RowsAffected()
+
+	if err != nil {
+		return "", fmt.Errorf("error getting rows affected: %v", err)
+	}
+
+	if rowsAffected == 0 {
+		return "", sql.ErrNoRows
+	}
+
+	return profilePicture.String, nil
+
 }

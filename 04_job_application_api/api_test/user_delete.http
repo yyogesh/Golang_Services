@@ -1,2 +1,2 @@
-GET http://localhost:8080/users
+DELETE http://localhost:8080/users/30
 Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluMSIsInVzZXJJRCI6NywiaXNfYWRtaW4iOnRydWUsImV4cCI6MTczMTk2NzA0NX0.b0IaLkSqet17aF-5Yfx-18ExRtMUyjqz3zG_Au8Drtc

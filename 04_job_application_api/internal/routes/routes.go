@@ -31,5 +31,6 @@ func InitRoutes(r *gin.Engine, db *sql.DB) {
 		authenticated.DELETE("/jobs/:id", handlers.DeleteJobByHandler(db))
 
 		authenticated.GET("/users", handlers.GetAllUsersHandler(db))
+		authenticated.DELETE("/users/:id", handlers.DeleteUserByIdHandler(db))
 	}
 }

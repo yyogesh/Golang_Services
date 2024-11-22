@@ -131,3 +131,41 @@ func GetAllUsersHandler(db *sql.DB) gin.HandlerFunc {
 		c.JSON(http.StatusOK, users)
 	}
 }
+
+func DeleteUserByIdHandler(db *sql.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		// Check if user is admin
+		isAdmin := c.GetBool("isAdmin")
+		if !isAdmin {
+			c.JSON(http.StatusForbidden, gin.H{"error": "Unauthorized access"})
+			return
+		}
+		// Get user ID from request params
+		id, err := strconv.Atoi(c.Param("id"))
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+			return
+		}
+
+		// Check if user is trying to delete themselves
+		currentUserID := c.GetInt("userID")
+		if currentUserID == id {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "You cannot delete yourself"})
+			return
+		}
+
+		// Delete User
+		err = services.DeleteUser(c, db, id)
+		if err != nil {
+			if err.Error() == "user not found" {
+				c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+				return
+			}
+			c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Error deleting user: %v", err)})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{"message": "User and associated data deleted successfully"})
+
+	}
+}
