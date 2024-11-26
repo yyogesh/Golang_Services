@@ -67,3 +67,7 @@ func DeleteUser(c *gin.Context, db *sql.DB, userID int) error {
 
 	return nil
 }
+
+func ChangePassword(db *sql.DB, userID int, currentPassword, newPassword string) error {
+	return repository.ChangePassword(db, userID, currentPassword, newPassword)
+}

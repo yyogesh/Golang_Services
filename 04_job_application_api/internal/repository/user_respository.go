@@ -4,6 +4,8 @@ import (
 	"database/sql"
 	"fmt"
 	"job_portal/internal/models"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 func CreateUser(db *sql.DB, user *models.User) error {
@@ -118,4 +120,43 @@ func DeleteUserWithTransaction(tx *sql.Tx, userID int) (string, error) {
 
 	return profilePicture.String, nil
 
+}
+
+func ChangePassword(db *sql.DB, userID int, currentPassword, newPassword string) error {
+	// First fetch and validate current password
+	var hashedPassword string
+
+	err := db.QueryRow("SELECT password FROM users WHERE id = ?", userID).Scan(&hashedPassword)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return fmt.Errorf("user not found")
+		}
+		return fmt.Errorf("error fetching user password: %v", err)
+	}
+
+	// Verify current password is correct
+	if err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(currentPassword)); err != nil {
+		return fmt.Errorf("current password is incorrect")
+	}
+
+	// Only if current password is correct, proceed to update
+	hashedNewPassword, err := bcrypt.GenerateFromPassword([]byte(newPassword), bcrypt.DefaultCost)
+	if err != nil {
+		return fmt.Errorf("error hashing new password: %v", err)
+	}
+
+	result, err := db.Exec("UPDATE users SET password = ? WHERE id = ?", hashedNewPassword, userID)
+	if err != nil {
+		return fmt.Errorf("error updating password: %v", err)
+	}
+
+	// Check if update actually affected a row
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("error checking update result: %v", err)
+	}
+	if rowsAffected == 0 {
+		return fmt.Errorf("no user found with id %d", userID)
+	}
+	return nil
 }

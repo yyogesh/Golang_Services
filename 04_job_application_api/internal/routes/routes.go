@@ -22,6 +22,7 @@ func InitRoutes(r *gin.Engine, db *sql.DB) {
 		authenticated.GET("/users/:id", handlers.GetUserByIdHandler(db))
 		authenticated.PUT("/users/:id", handlers.UpdateUserProfileHandler(db))
 		authenticated.POST("/users/:id/picture", handlers.UpdateUserProfilePcitureHandler(db))
+		authenticated.PUT("users/change-password", auth.PasswordValidationMiddleware(), handlers.ChangePasswordHandler(db))
 
 		// job routes
 		authenticated.POST("/jobs", handlers.CreateJobHandler(db))
