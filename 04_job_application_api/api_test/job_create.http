@@ -1,11 +1,15 @@
 POST http://localhost:8080/jobs
 content-type: application/json
-authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImpvaG5kb2UxIiwidXNlcklEIjoxLCJpc19hZG1pbiI6ZmFsc2UsImV4cCI6MTcyOTc5MTQ3Nn0.nOi2ir-rxdUmecYM8daYlxDHCIWiNX1Ni-M6PVOn4H4
+authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFiYyIsInVzZXJJRCI6MiwiaXNfYWRtaW4iOmZhbHNlLCJleHAiOjE3MzUzOTc0OTB9.djxJXueMqUQOSONHnD17smWcYodcsUqceMJ_WhRa874
 
 {
   "title": "Golang developer",
   "description": "Golang senior developers",
-  "location": "Delhi",
+  "location": "Hydrabad",
   "company": "ABC",
-  "salary": "100000"
+  "min_salary": 1500000,
+  "experience_level": "senior",
+  "skills": "ReactJS, NodeJS",
+  "max_salary": 2500000,
+  "type": "full-time"
 }

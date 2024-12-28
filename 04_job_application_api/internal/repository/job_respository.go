@@ -6,8 +6,8 @@ import (
 )
 
 func CreateJob(db *sql.DB, job *models.Job) (*models.Job, error) {
-	result, err := db.Exec("INSERT INTO jobs (title, description, company, location, salary, user_id) VALUES (?, ?, ?, ?, ?, ?)", job.Title,
-		job.Description, job.Company, job.Location, job.Salary, job.UserID)
+	result, err := db.Exec("INSERT INTO jobs (title, description, company, location, min_salary, max_salary, type, experience_level, skills, user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", job.Title,
+		job.Description, job.Company, job.Location, job.MinSalary, job.MaxSalary, job.Type, job.ExperienceLevel, job.Skills, job.UserID)
 
 	if err != nil {
 		return nil, err
@@ -35,7 +35,7 @@ func GetAllJobs(db *sql.DB) ([]models.Job, error) {
 	var jobs []models.Job
 	for rows.Next() {
 		var job models.Job
-		if err := rows.Scan(&job.ID, &job.Title, &job.Description, &job.Location, &job.Company, &job.Salary, &job.UserID, &job.CreatedAt); err != nil {
+		if err := rows.Scan(&job.ID, &job.Title, &job.Description, &job.Company, &job.Location, &job.MinSalary, &job.MaxSalary, &job.Type, &job.ExperienceLevel, &job.Skills, &job.UserID, &job.CreatedAt); err != nil {
 			return nil, err
 		}
 
@@ -57,7 +57,7 @@ func GetAllJobsByUserID(db *sql.DB, userID int) ([]models.Job, error) {
 	var jobs []models.Job
 	for rows.Next() {
 		var job models.Job
-		if err := rows.Scan(&job.ID, &job.Title, &job.Description, &job.Location, &job.Company, &job.Salary, &job.UserID, &job.CreatedAt); err != nil {
+		if err := rows.Scan(&job.ID, &job.Title, &job.Description, &job.Location, &job.Company, &job.MinSalary, &job.MaxSalary, &job.Type, &job.ExperienceLevel, &job.Skills, &job.UserID, &job.CreatedAt); err != nil {
 			return nil, err
 		}
 
@@ -71,7 +71,7 @@ func GetJobByID(db *sql.DB, id int) (*models.Job, error) {
 	job := &models.Job{}
 	row := db.QueryRow("SELECT * FROM jobs WHERE id = ?", id)
 
-	if err := row.Scan(&job.ID, &job.Title, &job.Description, &job.Location, &job.Company, &job.Salary, &job.UserID, &job.CreatedAt); err != nil {
+	if err := row.Scan(&job.ID, &job.Title, &job.Description, &job.Location, &job.Company, &job.MinSalary, &job.MaxSalary, &job.Type, &job.ExperienceLevel, &job.Skills, &job.UserID, &job.CreatedAt); err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
 		}
@@ -81,8 +81,8 @@ func GetJobByID(db *sql.DB, id int) (*models.Job, error) {
 }
 
 func UpdateJob(db *sql.DB, job *models.Job) (*models.Job, error) {
-	_, err := db.Exec("UPDATE jobs SET title = ?, description = ?, company = ?, location = ?, salary = ? WHERE id = ?", job.Title,
-		job.Description, job.Company, job.Location, job.Salary, job.ID)
+	_, err := db.Exec("UPDATE jobs SET title = ?, description = ?, company = ?, location = ?, min_salary = ?, max_salary = ?, type = ?, experience_level = ?, skills = ? WHERE id = ?", job.Title,
+		job.Description, job.Company, job.Location, job.MinSalary, job.MaxSalary, job.Type, job.ExperienceLevel, job.Skills, job.ID)
 
 	if err != nil {
 		return nil, err
